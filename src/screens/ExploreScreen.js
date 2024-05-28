@@ -25,7 +25,7 @@ const ExploreScreen = () => {
 
   useEffect(() => {
     console.log('Fetching products...');
-    axios.get('http://192.168.1.122:3001/products') // Replace with your machine's IP address
+    axios.get('http://192.168.0.34:3002/products') // Replace with your machine's IP address
       .then(response => {
         console.log('Products fetched:', response.data);
         setProducts(response.data);
