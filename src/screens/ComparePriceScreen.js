@@ -12,7 +12,7 @@ const ComparePriceScreen = ({ route, navigation }) => {
   useEffect(() => {
     const fetchPrices = async () => {
       try {
-        const response = await fetch('http://192.168.1.122:3002/api/store-prices');
+        const response = await fetch('http:192.168.0.34:3002/api/store-prices');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
