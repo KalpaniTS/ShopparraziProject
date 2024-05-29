@@ -19,19 +19,19 @@ const Stack = createStackNavigator();
 
 const HomeStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Product Catalog" component={HomeScreen} />
-    <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
-    <Stack.Screen name="ShoppingList" component={ShoppingListScreen} />
-    <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
-    <Stack.Screen name="ComparePrice" component={ComparePriceScreen} />
-    <Stack.Screen name="CartScreen" component={CartScreen} />
+    <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: "Home" }} />
+    <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ title: "Product Detail" }} />
+    <Stack.Screen name="ShoppingList" component={ShoppingListScreen} options={{ title: "Shopping List" }} />
+    <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} options={{ title: "Checkout" }} />
+    <Stack.Screen name="ComparePrice" component={ComparePriceScreen} options={{ title: "Compare Price" }} />
+    <Stack.Screen name="CartScreen" component={CartScreen} options={{ title: "Cart" }} />
   </Stack.Navigator>
 );
 
 const MainTabNavigator = () => (
   <Tab.Navigator tabBar={(props) => <BottomNavigation {...props} />}>
     <Tab.Screen
-      name="Home"
+      name="HomeTab"
       component={HomeStack}
       options={{
         tabBarLabel: "Home",
@@ -61,7 +61,7 @@ const MainTabNavigator = () => (
       name="ShoppingList"
       component={ShoppingListScreen}
       options={{
-        tabBarLabel: "ShoppingList",
+        tabBarLabel: "Shopping List",
         tabBarIcon: "heart-outline",
         tabBarIconFocused: "heart",
       }}
@@ -84,7 +84,7 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name="🛍️"
+            name="Welcome"
             component={WelcomeScreen}
             options={{ headerShown: false }}
           />
@@ -96,7 +96,7 @@ const App = () => {
           <Stack.Screen
             name="ComparePriceScreen"
             component={ComparePriceScreen}
-            options={{ headerShown: true }}
+            options={{ title: "Compare Price" }}
           />
           <Stack.Screen
             name="ProductDetail"
@@ -106,12 +106,17 @@ const App = () => {
           <Stack.Screen
             name="Checkout"
             component={CheckoutScreen}
-            options={{ headerShown: true }}
+            options={{ title: "Checkout" }}
           />
           <Stack.Screen
             name="Cart"
             component={CartScreen}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ title: "Login" }}
           />
         </Stack.Navigator>
       </NavigationContainer>
