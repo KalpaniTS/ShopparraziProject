@@ -1,19 +1,42 @@
-// src/screen/LoginScreen.js
-import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
 
-// Import your logo image
-import logo from '../../assets/logo.png'; // Replace '../assets/logo.png' with the actual path to your logo image
+import logo from '../../assets/logo.png';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://192.168.0.34:3002/login', { email, password });
+      const { firstName, lastName } = response.data;
+      navigation.navigate('Cart', { firstName, lastName });
+    } catch (error) {
+      Alert.alert('Login Error', error.response ? error.response.data : 'Something went wrong');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* Add the logo */}
       <Image source={logo} style={styles.logo} />
       <Text style={styles.header}>LOGIN</Text>
-      <TextInput style={styles.input} placeholder="Your email" />
-      <TouchableOpacity style={styles.button}>
+      <TextInput
+        style={styles.input}
+        placeholder="Your email"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Your password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Continue with email</Text>
       </TouchableOpacity>
       <Text style={styles.or}>Or</Text>
@@ -26,7 +49,6 @@ const LoginScreen = () => {
         <Text style={styles.buttonText}>Sign in with Facebook</Text>
       </TouchableOpacity>
       <Text style={styles.signUpText}>Don't have a Shopparazi account? Sign up</Text>
-      {/* Bottom Navigation Component */}
     </View>
   );
 };
@@ -41,7 +63,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 100,
     height: 100,
-    marginBottom: 20, // Add some spacing between the logo and header
+    marginBottom: 20,
   },
   header: {
     fontSize: 24,
