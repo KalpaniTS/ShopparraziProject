@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
 const ComparePriceScreen = ({ route, navigation }) => {
   const { shoppingList = [] } = route.params; // Ensure shoppingList is an array
-  console.log('Received shoppingList:', shoppingList); // Debugging
   const [storeData, setStoreData] = useState([]);
   const [topStores, setTopStores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,15 +11,13 @@ const ComparePriceScreen = ({ route, navigation }) => {
   useEffect(() => {
     const fetchPrices = async () => {
       try {
-        const response = await fetch('http://192.168.1.122:3002/api/store-prices');
+        const response = await fetch('http://192.168.0.34:3002/api/store-prices');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log('Fetched store data:', data); // Debugging
         setStoreData(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error('Error fetching store prices:', error.message);
         setError('There was an error fetching the store prices. Please try again later.');
       } finally {
         setLoading(false);
@@ -32,24 +29,22 @@ const ComparePriceScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     if (Array.isArray(storeData) && storeData.length > 0 && Array.isArray(shoppingList) && shoppingList.length > 0) {
-      console.log('Processing store data and shopping list:', storeData, shoppingList); // Debugging
-
       const storeCosts = storeData.map((store) => {
         const totalCost = shoppingList.reduce((total, item) => {
           const product = store.products.find((p) => p.id === item.id);
-          console.log(`Processing item: ${item.name}, quantity: ${item.quantity}, price: ${product ? product.price : 'N/A'}`); // Debugging
           return total + (product ? product.price * item.quantity : 0);
         }, 0);
         return { ...store, totalCost };
       });
 
       const sortedStores = storeCosts.sort((a, b) => a.totalCost - b.totalCost);
-      console.log('Sorted store costs:', sortedStores); // Debugging
       setTopStores(sortedStores.slice(0, 3));
-    } else {
-      console.log('No data to process:', { storeData, shoppingList });
     }
   }, [storeData, shoppingList]);
+
+  const handlePlaceOrder = (store) => {
+    navigation.navigate('Login', { store, totalCost: store.totalCost });
+  };
 
   if (loading) {
     return (
@@ -70,7 +65,7 @@ const ComparePriceScreen = ({ route, navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Price Comparison</Text>
-      {Array.isArray(topStores) && topStores.length > 0 ? (
+      {topStores.length > 0 ? (
         topStores.map((store, storeIndex) => (
           <View key={`${store.name}-${storeIndex}`} style={styles.storeContainer}>
             <Text style={styles.storeName}>{store.name}</Text>
@@ -83,20 +78,17 @@ const ComparePriceScreen = ({ route, navigation }) => {
               );
             })}
             <Text style={styles.totalText}>Total: AUD {store.totalCost.toFixed(2)}</Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => handlePlaceOrder(store)}
+            >
+              <Text style={styles.buttonText}>Place order from {store.name}</Text>
+            </TouchableOpacity>
           </View>
         ))
       ) : (
         <Text>No data available</Text>
       )}
-      {Array.isArray(topStores) && topStores.map((store, index) => (
-        <TouchableOpacity
-          key={`${store.name}-button-${index}`}
-          style={styles.button}
-          onPress={() => Alert.alert('Order Placed', `Order placed from ${store.name}`)}
-        >
-          <Text style={styles.buttonText}>Place order from {store.name}</Text>
-        </TouchableOpacity>
-      ))}
     </ScrollView>
   );
 };
