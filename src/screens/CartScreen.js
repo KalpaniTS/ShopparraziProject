@@ -9,11 +9,11 @@ import {
   FlatList,
 } from "react-native";
 
-const CartScreen = ({ navigation }) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+const CartScreen = ({ route, navigation }) => {
+  const { firstName, lastName } = route.params || {};
   const [deliveryOption, setDeliveryOption] = useState("");
   const [cart, setCart] = useState([]);
+  const totalCost = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handlePlaceOrder = () => {
     navigation.navigate("CheckoutScreen");
@@ -51,13 +51,13 @@ const CartScreen = ({ navigation }) => {
         <TextInput
           placeholder="First Name"
           value={firstName}
-          onChangeText={setFirstName}
+          editable={false}
           style={styles.input}
         />
         <TextInput
           placeholder="Last Name"
           value={lastName}
-          onChangeText={setLastName}
+          editable={false}
           style={styles.input}
         />
         <View style={styles.deliveryOptions}>
@@ -97,11 +97,12 @@ const CartScreen = ({ navigation }) => {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <Text style={styles.itemText}>
-                {item.name} - {item.price}
+                {item.name} - {item.price} x {item.quantity}
               </Text>
             )}
           />
         )}
+        <Text style={styles.totalText}>Total: ${totalCost.toFixed(2)}</Text>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -173,6 +174,11 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 16,
     color: "red",
+  },
+  totalText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 10,
   },
   buttonContainer: {
     marginTop: 10,
